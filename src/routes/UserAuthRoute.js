@@ -6,7 +6,8 @@ router.post('/create', userAuthController.create)
 router.post('/login', userAuthController.login)
 router.post('/login/pin', userAuthController.loginpin)
 // router.post('/logout', userAuthController.logout)
-// router.post('/authenticate', userAuthController.authenticate)
+router.post('/validate-token/pin', userAuthController.validatePinToken)
+router.post('/validate-token/password', userAuthController.validatePasswordToken)
 
 
 module.exports = router;

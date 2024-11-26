@@ -6,7 +6,6 @@ const userAuthRoute = require('./src/routes/UserAuthRoute')
 const fieldRoute = require('./src/routes/FieldRoute');
 
 const mongo = require('./src/db/mongo');
-const fieldMongo = require('./src/db/fieldMongo')
 
 const app = express();
 
@@ -52,9 +51,6 @@ app.use('/field', fieldRoute)
 app.listen(PORT, (req, res)=> {
     console.log(`listening on ${PORT}`);
 })
-// app.listen(PORT, '0.0.0.0', () => {
-//     console.log(`Server is listening on http://0.0.0.0:${PORT}`);
-// });
 
 
 

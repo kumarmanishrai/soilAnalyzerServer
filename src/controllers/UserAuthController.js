@@ -8,7 +8,9 @@ dotenv.config();
 exports.create = async (req, res, next) => {
   console.log(req.body)
     const { email, password, pin } = req.body;
+
   try {
+    
     const hashedPassword = await bcrypt.hash(password, 10);
     const hashedPin = await bcrypt.hash(pin, 10);
     const user = new User({ email, password: hashedPassword, pin: hashedPin });
@@ -52,6 +54,28 @@ exports.loginpin = async(req, res, next) => {
     }
   } catch (err) {
     res.status(500).send({ error: 'Something went wrong!' + err });
+  }
+}
+
+exports.validatePinToken = async (req, res, next) => {
+  const { token } = req.body;
+
+  try {
+    jwt.verify(token, process.env.PIN_KEY);
+    res.status(200).json({ message: 'Pin Token is valid.' });
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid or expired pin token.' });
+  }
+}
+
+exports.validatePasswordToken = async (req, res, next) => {
+  const { token } = req.body;
+
+  try {
+    jwt.verify(token, process.env.PASSWORD_KEY);
+    res.status(200).json({ message: 'Password Token is valid.' });
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid or expired password token.' });
   }
 }
 
