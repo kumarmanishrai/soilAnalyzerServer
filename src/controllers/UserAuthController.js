@@ -35,24 +35,36 @@ exports.login = async (req, res, next) => {
       res.status(401).send({ error: 'Invalid credentials!' });
     }
   } catch (err) {
+
     res.status(500).send({ error: 'Something went wrong!' + err.message });
   }
 }
 
 
 exports.loginpin = async(req, res, next) => {
-    const { email, pin } = req.body;
+    const { pin, passwordToken } = req.body;
+    console.log(pin + ' ' + passwordToken)
+    // console.log(process.env.PASSWORD_KEY)
   try {
-    const user = await User.findOne({ email });
+    console.log(process.env.PASSWORD_KEY)
+    const decodedPasswordToken = jwt.verify(passwordToken, process.env.PASSWORD_KEY);
+    console.log(JSON.stringify(decodedPasswordToken))
+    const userId = decodedPasswordToken.userId;
+    console.log("userId:" + userId)
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
     if (user && (await bcrypt.compare(pin, user.pin))) {
-      const jwtTokenPin = jwt.sign({ userId: user._id }, process.env.PIN_KEY, { expiresIn: '2h' });
+      const jwtTokenPin = jwt.sign({ userId: user._id.toString() }, process.env.PIN_KEY, { expiresIn: '2h' });
       user.jwtTokenPin = jwtTokenPin
-      user.save({validateBeforeSave: false})
+      await user.save({validateBeforeSave: false})
       res.send({ jwtTokenPin, message: 'PIN login successful!' });
     } else {
       res.status(401).send({ error: 'Invalid PIN!' });
     }
   } catch (err) {
+    console.log(err);
     res.status(500).send({ error: 'Something went wrong!' + err });
   }
 }
