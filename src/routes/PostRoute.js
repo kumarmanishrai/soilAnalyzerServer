@@ -31,7 +31,7 @@ const router = express.Router()
 router.post('/create', validateUser, postController.create)
 router.post('/delete/:postId', validateUser, postController.delete)
 router.post('/update/:postId', validateUser, postController.update)
-router.get('/allpost', validateUser, postController.allpost)
+router.post('/allpost', validateUser, postController.allpost)
 
 
 module.exports = router
