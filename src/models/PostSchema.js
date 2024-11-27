@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const postSchema = new mongoose.Schema({
   uploadTime: { 
         type: Date, default: Date.now 

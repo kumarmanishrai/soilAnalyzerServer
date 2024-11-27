@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 
 const userAuthRoute = require('./src/routes/UserAuthRoute')
 const fieldRoute = require('./src/routes/FieldRoute');
+const postRoute = require('./src/routes/PostRoute');
 
 const mongo = require('./src/db/mongo');
 
@@ -41,6 +42,8 @@ app.get('/check', (req, res) => {
 app.use('/user', userAuthRoute);
 
 app.use('/field', fieldRoute)
+
+app.use('/post', postRoute);
 
 
 

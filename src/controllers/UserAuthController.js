@@ -6,7 +6,7 @@ dotenv.config();
 
 
 exports.create = async (req, res, next) => {
-  console.log(req.body)
+  // console.log(req.body)
     const { email, password, pin } = req.body;
 
   try {
@@ -43,14 +43,14 @@ exports.login = async (req, res, next) => {
 
 exports.loginpin = async(req, res, next) => {
     const { pin, passwordToken } = req.body;
-    console.log(pin + ' ' + passwordToken)
+    // console.log(pin + ' ' + passwordToken)
     // console.log(process.env.PASSWORD_KEY)
   try {
-    console.log(process.env.PASSWORD_KEY)
+    // console.log(process.env.PASSWORD_KEY)
     const decodedPasswordToken = jwt.verify(passwordToken, process.env.PASSWORD_KEY);
-    console.log(JSON.stringify(decodedPasswordToken))
+    // console.log(JSON.stringify(decodedPasswordToken))
     const userId = decodedPasswordToken.userId;
-    console.log("userId:" + userId)
+    // console.log("userId:" + userId)
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
