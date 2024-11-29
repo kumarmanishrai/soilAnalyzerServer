@@ -32,6 +32,8 @@ router.post('/create', validateUser, postController.create)
 router.post('/delete/:postId', validateUser, postController.delete)
 router.post('/update/:postId', validateUser, postController.update)
 router.post('/allpost', validateUser, postController.allpost)
+router.post('/likedpost', validateUser, postController.likedPost)
+router.post('/userpost', validateUser, postController.userPost)
 
 
 module.exports = router

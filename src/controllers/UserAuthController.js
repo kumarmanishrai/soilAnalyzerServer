@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserSchema')
+const Post = require('../models/PostSchema')
 const dotenv = require('dotenv')
 dotenv.config();
 
@@ -8,16 +9,46 @@ dotenv.config();
 exports.create = async (req, res, next) => {
   // console.log(req.body)
     const { email, password, pin } = req.body;
+    const name = req.body.name || null
+    const image = req.body.image || null
 
   try {
     
     const hashedPassword = await bcrypt.hash(password, 10);
     const hashedPin = await bcrypt.hash(pin, 10);
-    const user = new User({ email, password: hashedPassword, pin: hashedPin });
+    const user = new User({ email, password: hashedPassword, pin: hashedPin, name, image });
     await user.save();
     res.status(201).send({ message: 'User registered successfully!' });
   } catch (err) {
     res.status(400).send({ error: 'User already exists!' });
+  }
+}
+
+
+exports.about = async (req, res, next) => {
+  const {passwordToken} = req.body;
+  try {
+    const decodedPasswordToken = jwt.verify(passwordToken, process.env.PASSWORD_KEY);
+    const userId = decodedPasswordToken.userId;
+    const user = await User.findById(userId);
+
+    // userPosts = await Promise.all(
+    //   user.posts.map(async (postId)=> {
+    //     const post = await Post.findById(postId);
+    //     console.log(post.heading)
+    //     return {postId:post._id, heading: post.heading, text: post.text, image: post.image, likesCount: post.likesCount}
+    //   })
+    // )
+
+    const userDetails = {
+      name : user.name,
+      email : user.email,
+      image : user.image 
+    }
+
+    return res.status(200).json(userDetails)
+  } catch (error) {
+    res.status(500).send({ error: 'Something went wrong!' + err.message });
   }
 }
 
