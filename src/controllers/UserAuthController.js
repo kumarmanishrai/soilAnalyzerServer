@@ -2,7 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserSchema')
 const Post = require('../models/PostSchema')
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const { response } = require('express');
 dotenv.config();
 
 
@@ -32,14 +33,6 @@ exports.about = async (req, res, next) => {
     const userId = decodedPasswordToken.userId;
     const user = await User.findById(userId);
 
-    // userPosts = await Promise.all(
-    //   user.posts.map(async (postId)=> {
-    //     const post = await Post.findById(postId);
-    //     console.log(post.heading)
-    //     return {postId:post._id, heading: post.heading, text: post.text, image: post.image, likesCount: post.likesCount}
-    //   })
-    // )
-
     const userDetails = {
       name : user.name,
       email : user.email,
@@ -52,6 +45,31 @@ exports.about = async (req, res, next) => {
   }
 }
 
+exports.someUser = async (req, res, next) => {
+  const {passwordToken} = req.body;
+  const {someUserId} = req.params
+  try {
+    const decodedPasswordToken = jwt.verify(passwordToken, process.env.PASSWORD_KEY);
+    const userId = decodedPasswordToken.userId;
+    const user = await User.findById(userId);
+
+    
+    if(user){
+      const someUser = await User.findById(someUserId);
+      if(someUser){
+        const someUserDetails = {
+          name: someUser.name,
+          email: someUser.email,
+          image: someUser.image|| null,
+        }
+        res.status(200).json(someUserDetails);
+      }
+    }
+
+  } catch (error) {
+    res.status(500).send({ error: 'Something went wrong!' + err.message });
+  }
+}
 
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
